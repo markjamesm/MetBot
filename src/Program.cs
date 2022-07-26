@@ -8,4 +8,4 @@ var botClient = new TelegramBotClient(AccessTokens.Telegram);
 var metBot = new BotEngine(botClient, metApi);
 
 // Listen for messages sent to the bot
-await metBot.ListenForMessages();
+await metBot.ListenForMessagesAsync();

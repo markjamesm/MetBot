@@ -18,7 +18,7 @@ namespace MetBot
         }
 
         // Create a listener so that we can wait for messages to be sent to the bot
-        public async Task ListenForMessages()
+        public async Task ListenForMessagesAsync()
         {
             using var cts = new CancellationTokenSource();
 
