@@ -52,10 +52,11 @@ namespace MetBot
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
-            // Echo received message text
-            Message sentMessage = await botClient.SendTextMessageAsync(
+            Message sendArtwork = await botClient.SendPhotoAsync(
                 chatId: chatId,
-                text: "You said:\n" + messageText,
+                photo: "https://images.metmuseum.org/CRDImages/dp/original/DP843434.jpg",
+                caption: "<b>Samuel Palmer</b>. <i>Arwork</i>: The Weary Ploughman, or The Herdsman, or Tardus Bubulcus",
+                parseMode: ParseMode.Html,
                 cancellationToken: cancellationToken);
         }
 
