@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MetBot.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace MetBot
 {
     public interface IMetApi
     {
+        Task<CollectionItem> GetCollectionItemAsync(string objectNum);
     }
 }

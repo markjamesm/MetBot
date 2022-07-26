@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using MetBot.Models;
 
 namespace MetBot
 {
@@ -12,6 +13,15 @@ namespace MetBot
             var returnMessage = await _httpClient.GetAsync(_baseUrl + (endpoint ?? "")).ConfigureAwait(false);
 
             return await returnMessage.Content.ReadAsStringAsync();
+        }
+
+        public async Task<CollectionItem> GetCollectionItemAsync(string objectNum)
+        {
+            var jsonResponse = await GetResponseAsync("/objects/" + objectNum);
+
+            var collectionItem = JsonSerializer.Deserialize<CollectionItem>(jsonResponse);
+
+            return collectionItem ?? throw new ArgumentException("Error returning collection item");
         }
     }
 }
