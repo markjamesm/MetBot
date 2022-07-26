@@ -9,10 +9,12 @@ namespace MetBot
     public class BotEngine
     {
         private readonly TelegramBotClient _botClient;
+        private static IMetApi? _metApi;
 
-        public BotEngine(string accessToken)
+        public BotEngine(TelegramBotClient botClient, IMetApi metApi)
         {
-            _botClient = new TelegramBotClient(accessToken);
+            _botClient = botClient;
+            _metApi = metApi;
         }
 
         // Create a listener so that we can wait for messages to be sent to the bot
