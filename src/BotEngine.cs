@@ -59,7 +59,7 @@ namespace MetBot
 
             var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
 
-            if (String.IsNullOrEmpty(collectionItem.primaryImage))
+            if (string.IsNullOrEmpty(collectionItem.primaryImage))
             {
                 Message sendMessage = await botClient.SendTextMessageAsync(
                     chatId: chatId,
@@ -68,7 +68,7 @@ namespace MetBot
                     cancellationToken: cancellationToken);
             }
 
-            if (!String.IsNullOrEmpty(collectionItem.primaryImage))
+            if (!string.IsNullOrEmpty(collectionItem.primaryImage))
             {
                 Message sendArtwork = await botClient.SendPhotoAsync(
                     chatId: chatId,

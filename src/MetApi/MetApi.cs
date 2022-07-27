@@ -15,13 +15,28 @@ namespace MetBot
             return await returnMessage.Content.ReadAsStringAsync();
         }
 
+        public async Task<CollectionObjects> GetCollectionObjectsAsync()
+        {
+            var jsonResponse = await GetResponseAsync("/objects");
+            var collectionObjects = JsonSerializer.Deserialize<CollectionObjects>(jsonResponse);
+
+            return collectionObjects ?? throw new ArgumentException("Error returning collection objects");
+        }
+
         public async Task<CollectionItem> GetCollectionItemAsync(string objectNum)
         {
             var jsonResponse = await GetResponseAsync("/objects/" + objectNum);
-
             var collectionItem = JsonSerializer.Deserialize<CollectionItem>(jsonResponse);
 
             return collectionItem ?? throw new ArgumentException("Error returning collection item");
+        }
+
+        public async Task<CollectionObjects> SearchCollectionAsync(string query)
+        {
+            var jsonResponse = await GetResponseAsync("/objects/" + query + "&hasImages=true");
+            var collectionObjects = JsonSerializer.Deserialize<CollectionObjects>(jsonResponse);
+
+            return collectionObjects ?? throw new ArgumentException("Error returning collection item");
         }
     }
 }
