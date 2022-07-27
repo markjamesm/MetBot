@@ -55,25 +55,28 @@ namespace MetBot
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
-            var randomCollectionItem = await RandomImageRequestAsync();
-
-            if (string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+            if (message.Text == "!random")
             {
-                Message sendMessage = await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: "<b>" + randomCollectionItem.artistDisplayName + "</b>." + "<i>Artwork</i>:" + randomCollectionItem.title,
-                    parseMode: ParseMode.Html,
-                    cancellationToken: cancellationToken);
-            }
+                var randomCollectionItem = await RandomImageRequestAsync();
 
-            if (!string.IsNullOrEmpty(randomCollectionItem.primaryImage))
-            {
-                Message sendArtwork = await botClient.SendPhotoAsync(
-                    chatId: chatId,
-                    photo: randomCollectionItem.primaryImage,
-                    caption: "<b>" + randomCollectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + randomCollectionItem.title,
-                    parseMode: ParseMode.Html,
-                    cancellationToken: cancellationToken);
+                if (string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+                {
+                    Message sendMessage = await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: "<b>" + randomCollectionItem.artistDisplayName + "</b>." + "<i>Artwork</i>:" + randomCollectionItem.title,
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
+
+                if (!string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+                {
+                    Message sendArtwork = await botClient.SendPhotoAsync(
+                        chatId: chatId,
+                        photo: randomCollectionItem.primaryImage,
+                        caption: "<b>" + randomCollectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + randomCollectionItem.title,
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
             }
         }
 
