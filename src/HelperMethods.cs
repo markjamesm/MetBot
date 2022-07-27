@@ -5,9 +5,10 @@
         public static int RandomNumberFromList(List<int> numList)
         {
             var rnd = new Random();
-            int index = rnd.Next(numList.Count);
+            int rndIndex = rnd.Next(numList.Count);
+            int random = numList[rndIndex];
 
-            return index;
+            return random;
         }
     }
 }
