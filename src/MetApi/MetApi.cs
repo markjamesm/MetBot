@@ -33,7 +33,7 @@ namespace MetBot
 
         public async Task<CollectionObjects> SearchCollectionAsync(string query)
         {
-            var jsonResponse = await GetResponseAsync("/objects/" + query + "&hasImages=true");
+            var jsonResponse = await GetResponseAsync("/search?q=" + query + "&hasImages=true");
             var collectionObjects = JsonSerializer.Deserialize<CollectionObjects>(jsonResponse);
 
             return collectionObjects ?? throw new ArgumentException("Error returning collection item");
