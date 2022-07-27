@@ -57,12 +57,7 @@ namespace MetBot
             {
                 var randomCollectionItem = await RandomImageRequestAsync();
 
-                Message sendArtwork = await botClient.SendPhotoAsync(
-                    chatId: message.Chat.Id,
-                    photo: randomCollectionItem.primaryImage,
-                    caption: "<b>" + randomCollectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + randomCollectionItem.title,
-                    parseMode: ParseMode.Html,
-                    cancellationToken: cancellationToken);
+                await SendPhotoMessageAsync(botClient, message, randomCollectionItem, cancellationToken);
             }
 
             if (message.Text.Contains("!search"))
@@ -71,14 +66,19 @@ namespace MetBot
 
                 if (!string.IsNullOrEmpty(collectionItem.primaryImage))
                 {
-                    Message sendArtwork = await botClient.SendPhotoAsync(
-                        chatId: message.Chat.Id,
-                        photo: collectionItem.primaryImage,
-                        caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
-                        parseMode: ParseMode.Html,
-                        cancellationToken: cancellationToken);
+                    await SendPhotoMessageAsync(botClient, message, collectionItem, cancellationToken);
                 }
             }
+        }
+
+        private static async Task SendPhotoMessageAsync(ITelegramBotClient botClient, Message message, CollectionItem collectionItem, CancellationToken cancellationToken)
+        {
+            Message sendArtwork = await botClient.SendPhotoAsync(
+                chatId: message.Chat.Id,
+                photo: collectionItem.primaryImage,
+                caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
         }
 
         private static async Task<CollectionItem> SearchImageRequestAsync(Message message)
