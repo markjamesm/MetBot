@@ -6,8 +6,9 @@
         {
             var rnd = new Random();
             int index = rnd.Next(numList.Count);
+            int random = numList[index];
 
-            return index;
+            return random;
         }
     }
 }

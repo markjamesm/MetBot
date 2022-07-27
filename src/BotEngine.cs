@@ -85,7 +85,6 @@ namespace MetBot
 
                 var searchList = await _metApi.SearchCollectionAsync(s[1]);
 
-
                 var collectionObject = HelperMethods.RandomNumberFromList(searchList.objectIDs);
 
                 var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
