@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using MetBot.Models;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -54,12 +55,61 @@ namespace MetBot
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
-            Message sendArtwork = await botClient.SendPhotoAsync(
-                chatId: chatId,
-                photo: "https://images.metmuseum.org/CRDImages/dp/original/DP843434.jpg",
-                caption: "<b>Samuel Palmer</b>. <i>Arwork</i>: The Weary Ploughman, or The Herdsman, or Tardus Bubulcus",
-                parseMode: ParseMode.Html,
-                cancellationToken: cancellationToken);
+            if (message.Text == "!random")
+            {
+                var randomCollectionItem = await RandomImageRequestAsync();
+
+                if (string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+                {
+                    Message sendMessage = await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: "No image available for this artwork. Try again!",
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
+
+                if (!string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+                {
+                    Message sendArtwork = await botClient.SendPhotoAsync(
+                        chatId: chatId,
+                        photo: randomCollectionItem.primaryImage,
+                        caption: "<b>" + randomCollectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + randomCollectionItem.title,
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
+            }
+
+            if (message.Text.Contains("!search"))
+            {
+                string[] s = message.Text.Split(" ");
+
+                var searchList = await _metApi.SearchCollectionAsync(s[1]);
+
+                var collectionObject = HelperMethods.RandomNumberFromList(searchList.objectIDs);
+
+                var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
+
+                if (!string.IsNullOrEmpty(collectionItem.primaryImage))
+                {
+                    Message sendArtwork = await botClient.SendPhotoAsync(
+                        chatId: chatId,
+                        photo: collectionItem.primaryImage,
+                        caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
+            }
+        }
+
+        // Returns a random artwork from the entire collection
+        private static async Task<CollectionItem> RandomImageRequestAsync()
+        {
+            var objectList = await _metApi.GetCollectionObjectsAsync();
+            var collectionObject = HelperMethods.RandomNumberFromList(objectList.objectIDs);
+
+            var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
+
+            return collectionItem;
         }
 
         private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
