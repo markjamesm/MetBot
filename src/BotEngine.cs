@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using MetBot.Models;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -54,29 +55,37 @@ namespace MetBot
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
+            var randomCollectionItem = await RandomImageRequestAsync();
+
+            if (string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+            {
+                Message sendMessage = await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: "<b>" + randomCollectionItem.artistDisplayName + "</b>." + "<i>Artwork</i>:" + randomCollectionItem.title,
+                    parseMode: ParseMode.Html,
+                    cancellationToken: cancellationToken);
+            }
+
+            if (!string.IsNullOrEmpty(randomCollectionItem.primaryImage))
+            {
+                Message sendArtwork = await botClient.SendPhotoAsync(
+                    chatId: chatId,
+                    photo: randomCollectionItem.primaryImage,
+                    caption: "<b>" + randomCollectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + randomCollectionItem.title,
+                    parseMode: ParseMode.Html,
+                    cancellationToken: cancellationToken);
+            }
+        }
+
+        // Returns a random artwork from the entire collection
+        private static async Task<CollectionItem> RandomImageRequestAsync()
+        {
             var objectList = await _metApi.GetCollectionObjectsAsync();
             var collectionObject = HelperMethods.RandomNumberFromList(objectList.objectIDs);
 
             var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
 
-            if (string.IsNullOrEmpty(collectionItem.primaryImage))
-            {
-                Message sendMessage = await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: "<b>" + collectionItem.artistDisplayName + "</b>." + "<i>Artwork</i>:" + collectionItem.title,
-                    parseMode: ParseMode.Html,
-                    cancellationToken: cancellationToken);
-            }
-
-            if (!string.IsNullOrEmpty(collectionItem.primaryImage))
-            {
-                Message sendArtwork = await botClient.SendPhotoAsync(
-                    chatId: chatId,
-                    photo: collectionItem.primaryImage,
-                    caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
-                    parseMode: ParseMode.Html,
-                    cancellationToken: cancellationToken);
-            }
+            return collectionItem;
         }
 
         private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
