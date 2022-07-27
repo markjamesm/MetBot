@@ -78,6 +78,28 @@ namespace MetBot
                         cancellationToken: cancellationToken);
                 }
             }
+
+            if (message.Text.Contains("!search"))
+            {
+                string[] s = message.Text.Split(" ");
+
+                var searchList = await _metApi.SearchCollectionAsync(s[1]);
+
+
+                var collectionObject = HelperMethods.RandomNumberFromList(searchList.objectIDs);
+
+                var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
+
+                if (!string.IsNullOrEmpty(collectionItem.primaryImage))
+                {
+                    Message sendArtwork = await botClient.SendPhotoAsync(
+                        chatId: chatId,
+                        photo: collectionItem.primaryImage,
+                        caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
+                        parseMode: ParseMode.Html,
+                        cancellationToken: cancellationToken);
+                }
+            }
         }
 
         // Returns a random artwork from the entire collection
