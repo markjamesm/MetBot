@@ -51,16 +51,14 @@ namespace MetBot
             if (message.Text is not { } messageText)
                 return;
 
-            var chatId = message.Chat.Id;
-
-            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            Console.WriteLine($"Received a '{messageText}' message in chat {message.Chat.Id}.");
 
             if (message.Text == "!random")
             {
                 var randomCollectionItem = await RandomImageRequestAsync();
 
                 Message sendArtwork = await botClient.SendPhotoAsync(
-                    chatId: chatId,
+                    chatId: message.Chat.Id,
                     photo: randomCollectionItem.primaryImage,
                     caption: "<b>" + randomCollectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + randomCollectionItem.title,
                     parseMode: ParseMode.Html,
@@ -69,24 +67,31 @@ namespace MetBot
 
             if (message.Text.Contains("!search"))
             {
-                string[] s = message.Text.Split(" ");
-
-                var searchList = await _metApi.SearchCollectionAsync(s[1]);
-
-                var collectionObject = HelperMethods.RandomNumberFromList(searchList.objectIDs);
-
-                var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
+                var collectionItem = await SearchImageRequestAsync(message);
 
                 if (!string.IsNullOrEmpty(collectionItem.primaryImage))
                 {
                     Message sendArtwork = await botClient.SendPhotoAsync(
-                        chatId: chatId,
+                        chatId: message.Chat.Id,
                         photo: collectionItem.primaryImage,
                         caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
                         parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
                 }
             }
+        }
+
+        private static async Task<CollectionItem> SearchImageRequestAsync(Message message)
+        {
+            string[] s = message.Text.Split(" ");
+
+            var searchList = await _metApi.SearchCollectionAsync(s[1]);
+
+            var collectionObject = HelperMethods.RandomNumberFromList(searchList.objectIDs);
+
+            var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
+
+            return collectionItem;
         }
 
         // Returns a random artwork from the entire collection
@@ -96,6 +101,7 @@ namespace MetBot
 
             // Keep getting new items from the collection until we find one with an image
             var validImage = false;
+
             while (!validImage)
             {
                 var collectionObject = HelperMethods.RandomNumberFromList(objectList.objectIDs);
