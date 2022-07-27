@@ -63,7 +63,7 @@ namespace MetBot
                 {
                     Message sendMessage = await botClient.SendTextMessageAsync(
                         chatId: chatId,
-                        text: "<b>" + randomCollectionItem.artistDisplayName + "</b>." + "<i>Artwork</i>:" + randomCollectionItem.title,
+                        text: "No image available for this artwork. Try again!",
                         parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
                 }
