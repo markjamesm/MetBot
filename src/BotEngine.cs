@@ -54,12 +54,29 @@ namespace MetBot
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
-            Message sendArtwork = await botClient.SendPhotoAsync(
-                chatId: chatId,
-                photo: "https://images.metmuseum.org/CRDImages/dp/original/DP843434.jpg",
-                caption: "<b>Samuel Palmer</b>. <i>Arwork</i>: The Weary Ploughman, or The Herdsman, or Tardus Bubulcus",
-                parseMode: ParseMode.Html,
-                cancellationToken: cancellationToken);
+            var objectList = await _metApi.GetCollectionObjectsAsync();
+            var collectionObject = HelperMethods.RandomNumberFromList(objectList.objectIDs);
+
+            var collectionItem = await _metApi.GetCollectionItemAsync(collectionObject.ToString());
+
+            if (String.IsNullOrEmpty(collectionItem.primaryImage))
+            {
+                Message sendMessage = await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: "<b>" + collectionItem.artistDisplayName + "</b>." + "<i>Artwork</i>:" + collectionItem.title,
+                    parseMode: ParseMode.Html,
+                    cancellationToken: cancellationToken);
+            }
+
+            if (!String.IsNullOrEmpty(collectionItem.primaryImage))
+            {
+                Message sendArtwork = await botClient.SendPhotoAsync(
+                    chatId: chatId,
+                    photo: collectionItem.primaryImage,
+                    caption: "<b>" + collectionItem.artistDisplayName + "</b>" + " <i>Artwork</i>: " + collectionItem.title,
+                    parseMode: ParseMode.Html,
+                    cancellationToken: cancellationToken);
+            }
         }
 
         private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
