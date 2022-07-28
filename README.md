@@ -8,13 +8,11 @@ A Telegram bot that displays images from the Metropolitan Museum of Art's collec
 * !random - Displays a random image from the Metropolitan Museum of Art's collection
 * !query \<search query\> - Displays an image which is associated with the search query
 
-https://markjames.dev/img/posts/metbot/csharp_telegram_bot_final_example.jpg
-
 ## Screenshots
 
 Requesting a random artwork from the collection:
 
-<img src="https://markjames.dev//img/posts/metbot/telegram_bot_random_image.jpg" class="img-fluid" alt="Telegram bot displaying a random image from the Met's collection">
+<img src="https://markjames.dev/img/posts/metbot/csharp_telegram_bot_final_example.jpg" class="img-fluid" alt="Telegram bot displaying a random image from the Met's collection">
 
 
 Searching the collection with a query:
