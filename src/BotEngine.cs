@@ -45,11 +45,15 @@ namespace MetBot
         {
             // Only process Message updates: https://core.telegram.org/bots/api#message
             if (update.Message is not { } message)
+            {
                 return;
+            }
 
             // Only process text messages
             if (message.Text is not { } messageText)
+            {
                 return;
+            }
 
             Console.WriteLine($"Received a '{messageText}' message in chat {message.Chat.Id}.");
 
